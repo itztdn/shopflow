@@ -34,6 +34,10 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    protected $attributes = [
+        'role' => Role::Customer->value,
+    ];
+
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin;
