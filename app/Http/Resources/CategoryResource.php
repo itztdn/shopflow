@@ -4,6 +4,22 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
+
+#[OA\Schema(
+    schema: 'Category',
+    properties: [
+        new OA\Property(property: 'slug', type: 'string', example: 't-shirts'),
+        new OA\Property(property: 'name', type: 'string', example: 'T-Shirts'),
+        new OA\Property(property: 'description', type: 'string', nullable: true),
+        new OA\Property(
+            property: 'children',
+            type: 'array',
+            items: new OA\Items(ref: '#/components/schemas/Category'),
+        ),
+    ],
+    type: 'object',
+)]
 
 /**
  * @mixin \App\Models\Category
