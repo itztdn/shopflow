@@ -336,6 +336,116 @@
                 }
             }
         },
+        "/api/orders": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Check out the given items and create an order",
+                "operationId": "2123ba58dadb22bd6f2c8081af562230",
+                "parameters": [
+                    {
+                        "name": "Idempotency-Key",
+                        "in": "header",
+                        "description": "Optional unique key to make checkout idempotent across retries. A repeated request with the same key returns the stored response with an Idempotent-Replay: true header instead of creating a second order.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "items"
+                                ],
+                                "properties": {
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "sku",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "sku": {
+                                                    "type": "string",
+                                                    "example": "TEE-BLK-M"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2,
+                                                    "maximum": 100,
+                                                    "minimum": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "minItems": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "A request with the same Idempotency-Key is still being processed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed or insufficient stock",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/products": {
             "get": {
                 "tags": [
@@ -453,6 +563,89 @@
                 },
                 "type": "object"
             },
+            "OrderItem": {
+                "properties": {
+                    "sku": {
+                        "type": "string",
+                        "example": "TEE-BLK-M"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Basic Tee — Black / M"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "unit_price": {
+                        "properties": {
+                            "amount": {
+                                "description": "Unit price in minor units",
+                                "type": "integer",
+                                "example": 2495
+                            },
+                            "currency": {
+                                "type": "string",
+                                "example": "USD"
+                            },
+                            "formatted": {
+                                "type": "string",
+                                "example": "24.95"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "Order": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending",
+                        "enum": [
+                            "pending",
+                            "paid",
+                            "shipped",
+                            "delivered",
+                            "cancelled"
+                        ]
+                    },
+                    "total": {
+                        "properties": {
+                            "amount": {
+                                "description": "Total in minor units",
+                                "type": "integer",
+                                "example": 4990
+                            },
+                            "currency": {
+                                "type": "string",
+                                "example": "USD"
+                            },
+                            "formatted": {
+                                "type": "string",
+                                "example": "49.90"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItem"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Product": {
                 "properties": {
                     "slug": {
@@ -517,6 +710,28 @@
                 },
                 "type": "object"
             },
+            "User": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Jane Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "test@example.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "customer",
+                        "enum": [
+                            "customer",
+                            "admin"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "ErrorResponse": {
                 "properties": {
                     "error": {
@@ -553,40 +768,6 @@
                         "description": "Token lifetime in seconds",
                         "type": "integer",
                         "example": 3600
-                    }
-                },
-                "type": "object"
-            },
-            "User": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Jane Doe"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "test@example.com"
-                    },
-                    "role": {
-                        "type": "string",
-                        "example": "customer",
-                        "enum": [
-                            "customer",
-                            "admin"
-                        ]
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -629,6 +810,10 @@
         {
             "name": "Catalog",
             "description": "Catalog"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
         }
     ]
 }
