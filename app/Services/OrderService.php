@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\OrderPlaced;
 use App\Exceptions\ApiException;
 use App\Models\Order;
 use App\Models\ProductVariant;
@@ -15,7 +16,7 @@ class OrderService
      */
     public function checkout(User $user, array $items): Order
     {
-        return DB::transaction(function () use ($user, $items) {
+        $order = DB::transaction(function () use ($user, $items) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'total'   => 0,
@@ -55,5 +56,9 @@ class OrderService
 
             return $order->load('items');
         });
+
+        OrderPlaced::dispatch($order->id);
+
+        return $order;
     }
 }
