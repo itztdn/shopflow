@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 class ProductController extends Controller
@@ -41,15 +42,23 @@ class ProductController extends Controller
             ),
         ],
     )]
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
-        $products = Product::query()
-            ->active()
-            ->with('category')
-            ->latest('id')
-            ->paginate(perPage: min($request->integer('per_page', 15), 50));
+        $page    = $request->integer('page', 1);
+        $perPage = min($request->integer('per_page', 15), 50);
+        $cacheKey = "products:page:{$page}:per:{$perPage}";
 
-        return ProductResource::collection($products);
+        $payload = Cache::tags(['products'])->remember($cacheKey, now()->addMinutes(10), function () use ($perPage) {
+            $products = Product::query()
+                ->active()
+                ->with('category')
+                ->latest('id')
+                ->paginate($perPage);
+
+            return ProductResource::collection($products)->response()->getData(true);
+        });
+
+        return response()->json($payload);
     }
 
     #[OA\Get(
@@ -82,10 +91,18 @@ class ProductController extends Controller
             ),
         ],
     )]
-    public function show(Product $product): ProductResource
+    public function show(Product $product): JsonResponse
     {
-        $product->load(['category', 'variants' => fn($q) => $q->active()]);
+        $payload = Cache::tags(['products'])->remember(
+            "product:{$product->slug}",
+            now()->addMinutes(10),
+            function () use ($product) {
+                $product->load(['category', 'variants' => fn($q) => $q->active()]);
 
-        return new ProductResource($product);
+                return (new ProductResource($product))->resolve();
+            },
+        );
+
+        return response()->json(['data' => $payload]);
     }
 }
