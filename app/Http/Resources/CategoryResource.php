@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
+/**
+ * @mixin \App\Models\Category
+ */
 #[OA\Schema(
     schema: 'Category',
     properties: [
@@ -21,9 +24,6 @@ use OpenApi\Attributes as OA;
     type: 'object',
 )]
 
-/**
- * @mixin \App\Models\Category
- */
 class CategoryResource extends JsonResource
 {
     /**

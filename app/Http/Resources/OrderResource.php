@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
+/**
+ * @mixin \App\Models\Order
+ */
 #[OA\Schema(
     schema: 'Order',
     properties: [
@@ -35,9 +38,6 @@ use OpenApi\Attributes as OA;
     type: 'object',
 )]
 
-/**
- * @mixin \App\Models\Order
- */
 class OrderResource extends JsonResource
 {
     public function toArray(Request $request): array
