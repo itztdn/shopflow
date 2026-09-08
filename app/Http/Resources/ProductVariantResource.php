@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
+/**
+ * @mixin \App\Models\ProductVariant
+ */
 #[OA\Schema(
     schema: 'ProductVariant',
     properties: [
@@ -26,9 +29,6 @@ use OpenApi\Attributes as OA;
     type: 'object',
 )]
 
-/**
- * @mixin \App\Models\ProductVariant
- */
 class ProductVariantResource extends JsonResource
 {
     /**
