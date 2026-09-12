@@ -2,12 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
 /**
- * @mixin \App\Models\Category
+ * @mixin Category
  */
 #[OA\Schema(
     schema: 'Category',
@@ -34,10 +35,10 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'slug'        => $this->slug,
-            'name'        => $this->name,
+            'slug' => $this->slug,
+            'name' => $this->name,
             'description' => $this->description,
-            'children'    => CategoryResource::collection($this->whenLoaded('children')),
+            'children' => CategoryResource::collection($this->whenLoaded('children')),
         ];
     }
 }

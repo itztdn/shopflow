@@ -44,7 +44,7 @@ class ProductController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
-        $page    = $request->integer('page', 1);
+        $page = $request->integer('page', 1);
         $perPage = min($request->integer('per_page', 15), 50);
         $cacheKey = "products:page:{$page}:per:{$perPage}";
 
@@ -97,7 +97,7 @@ class ProductController extends Controller
             "product:{$product->slug}",
             now()->addMinutes(10),
             function () use ($product) {
-                $product->load(['category', 'variants' => fn($q) => $q->active()]);
+                $product->load(['category', 'variants' => fn ($q) => $q->active()]);
 
                 return (new ProductResource($product))->resolve();
             },

@@ -2,12 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
 /**
- * @mixin \App\Models\Product
+ * @mixin Product
  */
 #[OA\Schema(
     schema: 'Product',
@@ -35,8 +36,8 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'slug'        => $this->slug,
-            'name'        => $this->name,
+            'slug' => $this->slug,
+            'name' => $this->name,
             'description' => $this->description,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'variants' => ProductVariantResource::collection($this->whenLoaded('variants')),

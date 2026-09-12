@@ -13,9 +13,9 @@ enum OrderStatus: string
     public function allowedTransitions(): array
     {
         return match ($this) {
-            self::Pending   => [self::Paid, self::Cancelled],
-            self::Paid      => [self::Shipped, self::Cancelled],
-            self::Shipped   => [self::Delivered],
+            self::Pending => [self::Paid, self::Cancelled],
+            self::Paid => [self::Shipped, self::Cancelled],
+            self::Shipped => [self::Delivered],
             self::Delivered, self::Cancelled => [],
         };
     }

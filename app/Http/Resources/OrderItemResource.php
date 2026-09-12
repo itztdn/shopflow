@@ -2,12 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
 /**
- * @mixin \App\Models\OrderItem
+ * @mixin OrderItem
  */
 #[OA\Schema(
     schema: 'OrderItem',
@@ -33,12 +34,12 @@ class OrderItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'sku'        => $this->sku,
-            'name'       => $this->name,
-            'quantity'   => $this->quantity,
+            'sku' => $this->sku,
+            'name' => $this->name,
+            'quantity' => $this->quantity,
             'unit_price' => [
-                'amount'    => $this->unit_price,
-                'currency'  => 'USD',
+                'amount' => $this->unit_price,
+                'currency' => 'USD',
                 'formatted' => number_format($this->unit_price / 100, 2),
             ],
         ];

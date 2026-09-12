@@ -23,9 +23,9 @@ describe('OrderStatus transitions', function () {
     it('allows cancellation only before shipping', function (OrderStatus $from, bool $canCancel) {
         expect($from->canTransitionTo(OrderStatus::Cancelled))->toBe($canCancel);
     })->with([
-        'from pending'   => [OrderStatus::Pending, true],
-        'from paid'      => [OrderStatus::Paid, true],
-        'from shipped'   => [OrderStatus::Shipped, false],
+        'from pending' => [OrderStatus::Pending, true],
+        'from paid' => [OrderStatus::Paid, true],
+        'from shipped' => [OrderStatus::Shipped, false],
         'from delivered' => [OrderStatus::Delivered, false],
     ]);
 });

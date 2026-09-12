@@ -23,15 +23,15 @@ class CategoryFactory extends Factory
         $name = Str::title(fake()->unique()->words(2, true));
 
         return [
-            'parent_id'   => null,
-            'name'        => $name,
-            'slug'        => Str::slug($name),
+            'parent_id' => null,
+            'name' => $name,
+            'slug' => Str::slug($name),
             'description' => fake()->sentence(),
         ];
     }
 
     public function childOf(Category $parent): static
     {
-        return $this->state(fn() => ['parent_id' => $parent->id]);
+        return $this->state(fn () => ['parent_id' => $parent->id]);
     }
 }

@@ -25,15 +25,15 @@ class ProductFactory extends Factory
 
         return [
             'category_id' => Category::factory(),
-            'name'        => $name,
-            'slug'        => Str::slug($name),
+            'name' => $name,
+            'slug' => Str::slug($name),
             'description' => fake()->paragraph(),
-            'is_active'   => true,
+            'is_active' => true,
         ];
     }
 
     public function inactive(): static
     {
-        return $this->state(fn() => ['is_active' => false]);
+        return $this->state(fn () => ['is_active' => false]);
     }
 }
