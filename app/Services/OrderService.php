@@ -19,7 +19,7 @@ class OrderService
         $order = DB::transaction(function () use ($user, $items) {
             $order = Order::create([
                 'user_id' => $user->id,
-                'total'   => 0,
+                'total' => 0,
             ]);
 
             $total = 0;
@@ -43,10 +43,10 @@ class OrderService
 
                 $order->items()->create([
                     'product_variant_id' => $variant->id,
-                    'sku'                => $variant->sku,
-                    'name'               => $variant->name,
-                    'unit_price'         => $variant->price,
-                    'quantity'           => $line['quantity'],
+                    'sku' => $variant->sku,
+                    'name' => $variant->name,
+                    'unit_price' => $variant->price,
+                    'quantity' => $line['quantity'],
                 ]);
 
                 $total += $variant->price * $line['quantity'];

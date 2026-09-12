@@ -2,12 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
 /**
- * @mixin \App\Models\ProductVariant
+ * @mixin ProductVariant
  */
 #[OA\Schema(
     schema: 'ProductVariant',
@@ -39,16 +40,16 @@ class ProductVariantResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'sku'  => $this->sku,
+            'sku' => $this->sku,
             'name' => $this->name,
             'price' => [
-                'amount'    => $this->price,
-                'currency'  => 'USD',
+                'amount' => $this->price,
+                'currency' => 'USD',
                 'formatted' => number_format($this->price / 100, 2),
             ],
 
-            'in_stock'   => $this->stock > 0,
-            'stock'      => $this->stock,
+            'in_stock' => $this->stock > 0,
+            'stock' => $this->stock,
         ];
     }
 }

@@ -39,7 +39,7 @@ class Idempotency
         if (! $lock->get()) {
             return response()->json([
                 'error' => [
-                    'code'    => 'idempotency_conflict',
+                    'code' => 'idempotency_conflict',
                     'message' => 'A request with this key is already being processed.',
                 ],
             ], 409);
@@ -51,7 +51,7 @@ class Idempotency
             if ($response->getStatusCode() < 300) {
                 Cache::put($cacheKey, [
                     'status' => $response->getStatusCode(),
-                    'body'   => $response->getContent(),
+                    'body' => $response->getContent(),
                 ], self::TTL_SECONDS);
             }
 

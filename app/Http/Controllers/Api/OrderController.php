@@ -24,8 +24,8 @@ class OrderController extends Controller
             new OA\Parameter(
                 name: 'Idempotency-Key',
                 description: 'Optional unique key to make checkout idempotent across retries. '
-                    . 'A repeated request with the same key returns the stored response '
-                    . 'with an Idempotent-Replay: true header instead of creating a second order.',
+                    .'A repeated request with the same key returns the stored response '
+                    .'with an Idempotent-Replay: true header instead of creating a second order.',
                 in: 'header',
                 required: false,
                 schema: new OA\Schema(type: 'string'),
