@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderService
 {
@@ -31,6 +32,13 @@ class OrderService
                     ->firstOrFail();
 
                 if ($variant->stock < $line['quantity']) {
+                    Log::warning('order.insufficient_stock', [
+                        'sku' => $variant->sku,
+                        'requested' => $line['quantity'],
+                        'available' => $variant->stock,
+                        'user_id' => $user->id,
+                    ]);
+
                     throw new ApiException(
                         errorCode: 'insufficient_stock',
                         message: "Not enough stock for SKU {$variant->sku}.",
@@ -56,6 +64,13 @@ class OrderService
 
             return $order->load('items');
         });
+
+        Log::info('order.placed', [
+            'order_id' => $order->id,
+            'user_id' => $user->id,
+            'total' => $order->total,
+            'items_count' => $order->items->count(),
+        ]);
 
         OrderPlaced::dispatch($order->id);
 
