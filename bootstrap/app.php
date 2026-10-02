@@ -1,6 +1,8 @@
 <?php
 
+use App\Exceptions\ApiException;
 use App\Exceptions\ApiExceptionRenderer;
+use App\Http\Middleware\AssignRequestId;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\Idempotency;
 use Illuminate\Foundation\Application;
@@ -17,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
+            AssignRequestId::class,
             ForceJsonResponse::class,
         ]);
 
@@ -35,5 +38,12 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return ApiExceptionRenderer::render($e);
+        });
+        $exceptions->report(function (Throwable $e) {
+            if ($e instanceof ApiException) {
+                return false;
+            }
+
+            return true;
         });
     })->create();
