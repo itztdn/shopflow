@@ -3,6 +3,7 @@
 use App\Exceptions\ApiException;
 use App\Exceptions\ApiExceptionRenderer;
 use App\Http\Middleware\AssignRequestId;
+use App\Http\Middleware\CollectMetrics;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\Idempotency;
 use Illuminate\Foundation\Application;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
             AssignRequestId::class,
+            CollectMetrics::class,
             ForceJsonResponse::class,
         ]);
 
