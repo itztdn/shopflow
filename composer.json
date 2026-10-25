@@ -13,6 +13,7 @@
     "darkaonline/l5-swagger": "^11.1",
     "laravel/framework": "^13.8",
     "laravel/tinker": "^3.0",
+    "promphp/prometheus_client_php": "^2.15",
     "tymon/jwt-auth": "^2.3",
     "vladimir-yuldashev/laravel-queue-rabbitmq": "^15.0"
   },
